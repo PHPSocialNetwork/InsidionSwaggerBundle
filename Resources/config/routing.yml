@@ -1,0 +1,3 @@
+insidion_swagger_homepage:
+    path:     /
+    defaults: { _controller: InsidionSwaggerBundle:Default:index }
