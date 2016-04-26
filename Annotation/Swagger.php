@@ -1,15 +1,20 @@
 <?php
+
+namespace Insidion\SwaggerBundle\Annotation;
+
+
+use Doctrine\Common\Annotations\Annotation;
+
 /**
- * Created by PhpStorm.
- * User: morlack
- * Date: 24-4-16
- * Time: 20:11
+ * @Annotation
  */
-
-namespace Insidion\SwaggerBundle;
-
-
-class Swagger
+class Swagger extends Annotation
 {
+    public $showInDocs = true;
+    public $operationId;
+    public $description = "This is an example description.";
+    public $tags;
+    public $consumes = array("application/json");
+    public $produces = array("application/json");
 
 }

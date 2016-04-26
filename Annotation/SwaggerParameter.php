@@ -1,15 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: morlack
- * Date: 24-4-16
- * Time: 21:05
- */
 
 namespace Insidion\SwaggerBundle\Annotation;
 
 
-class SwaggerParameter
-{
+use Doctrine\Common\Annotations\Annotation;
 
+/**
+ * @Annotation
+ * Class SwaggerParameter
+ * @package Insidion\SwaggerBundle\Annotation
+ */
+class SwaggerParameter extends Annotation
+{
+    public $name;
+    public $description = "Example description";
+    public $type = "string";
+    public $required = true;
 }

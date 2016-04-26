@@ -1,15 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: morlack
- * Date: 24-4-16
- * Time: 20:23
- */
 
 namespace Insidion\SwaggerBundle\Annotation;
 
+use Doctrine\Common\Annotations\Annotation;
 
-class SwaggerResult
+/**
+ * @Annotation
+ * Class SwaggerResult
+ * @package Insidion\SwaggerBundle\Annotation
+ */
+class SwaggerResult extends Annotation
 {
-
+    public $status = 200;
+    public $description = "This is an example result description";
 }

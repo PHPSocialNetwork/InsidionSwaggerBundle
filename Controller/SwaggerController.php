@@ -3,11 +3,16 @@
 namespace Insidion\SwaggerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
-class DefaultController extends Controller
+class SwaggerController extends Controller
 {
     public function indexAction()
     {
         return $this->render('InsidionSwaggerBundle:Default:index.html.twig');
+    }
+
+    public function jsonAction() {
+        return new Response($this->get("swagger.definition.retriever")->retrieve());
     }
 }

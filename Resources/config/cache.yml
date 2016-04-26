@@ -1,0 +1,6 @@
+services:
+  swagger.cache:
+    class: Insidion\SwaggerBundle\Cache\SwaggerDocGenerator
+    arguments: ['@swagger.definition.builder', '@kernel']
+    tags:
+      - {name: 'kernel.cache_warmer'}

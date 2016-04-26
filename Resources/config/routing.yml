@@ -1,3 +1,7 @@
-insidion_swagger_homepage:
-    path:     /
-    defaults: { _controller: InsidionSwaggerBundle:Default:index }
+insidion_swagger_index:
+    path:     /swagger/
+    defaults: { _controller: InsidionSwaggerBundle:Swagger:index }
+
+insidion_swagger_json:
+    path:     /swagger/swagger.json
+    defaults: { _controller: InsidionSwaggerBundle:Swagger:json }

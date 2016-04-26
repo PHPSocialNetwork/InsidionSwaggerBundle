@@ -9,7 +9,9 @@
 namespace Insidion\SwaggerBundle\Exception;
 
 
-class InvalidConfigurationException
+use Symfony\Component\Config\Definition\Exception\Exception;
+
+class InvalidConfigurationException extends Exception
 {
 
 }

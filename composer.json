@@ -1,0 +1,17 @@
+{
+  "name": "insidion/swagger-bundle",
+  "description": "Generate Swagger documentation",
+  "keywords": ["bundle", "api", "doc", "swagger"],
+  "type": "symfony-bundle",
+  "homepage": "https://github.com/Morlack/SwaggerBundle",
+  "license": "MIT",
+  "authors": [{
+    "name": "Mitchell Herrijgers"
+  }],
+  "require": {
+    "php": ">=5.3.2",
+    "symfony/filesystem": "~3.0",
+    "symfony/framework-bundle": "~3.0"
+  },
+  "minimum-stability": "dev"
+}

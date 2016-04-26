@@ -1,15 +1,50 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: morlack
- * Date: 24-4-16
- * Time: 19:01
- */
 
 namespace Insidion\SwaggerBundle\Cache;
 
 
-class SwaggerDocGenerator
-{
+use Insidion\SwaggerBundle\Processor\RoutingProcessor;
+use Insidion\SwaggerBundle\Service\SwaggerBuilder;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
+class SwaggerDocGenerator implements CacheWarmerInterface
+{
+    /* @var SwaggerBuilder $swaggerBuilder */
+    private $swaggerBuilder;
+    private $rootDir;
+
+    public function __construct(SwaggerBuilder $builder, KernelInterface $kernel)
+    {
+        $this->swaggerBuilder = $builder;
+        $this->rootDir = $kernel->getRootDir();
+    }
+
+    /**
+     * Checks whether this warmer is optional or not.
+     *
+     * Optional warmers can be ignored on certain conditions.
+     *
+     * A warmer should return true if the cache can be
+     * generated incrementally and on-demand.
+     *
+     * @return bool true if the warmer is optional, false otherwise
+     */
+    public function isOptional()
+    {
+        return false;
+    }
+
+    /**
+     * Warms up the cache.
+     *
+     * @param string $cacheDir The cache directory
+     */
+    public function warmUp($cacheDir)
+    {
+
+        $fs = new FileSystem();
+        $fs->dumpFile($this->rootDir . '/swagger/swagger.json', $this->swaggerBuilder->buildSwagger());
+    }
 }
