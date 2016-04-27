@@ -42,3 +42,14 @@ class AppKernel extends Kernel
     // ...
 }
 ```
+
+Step 3: Enable integrated client routing (optional)
+============
+
+Add the following to your routing.yml:
+
+```yaml
+insidion_swagger:
+    resource: "@InsidionSwaggerBundle/Resources/config/routing.yml"
+    prefix:   /
+```
