@@ -11,14 +11,14 @@ class SwaggerDefinitionRetriever
 {
     /** @var ContainerInterface $container */
     private $container;
-    private $rootDir;
+    private $cacheDir;
     /** @var Filesystem $fileSystem */
     private $fileSystem;
 
-    public function __construct(ContainerInterface $container, $rootDir, Filesystem $fileSystem)
+    public function __construct(ContainerInterface $container, $cacheDir, Filesystem $fileSystem)
     {
         $this->container = $container;
-        $this->rootDir = $rootDir;
+        $this->cacheDir = $cacheDir;
         $this->fileSystem = $fileSystem;
     }
 
@@ -27,7 +27,7 @@ class SwaggerDefinitionRetriever
      * @return string
      */
     public function retrieve() {
-        $filePath = $this->rootDir . "/swagger/swagger.json";
+        $filePath = $this->cacheDir . "/swagger/swagger.json";
         if($this->fileSystem->exists($filePath)) {
             return file_get_contents($filePath);
         } else {
