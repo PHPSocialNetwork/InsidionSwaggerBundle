@@ -64,4 +64,5 @@ Above Configration will result in the following Swagger JSON:
   "definitions": {}
 }
 ```
+
 Note that the paths and definitions will be added as you configure them.  

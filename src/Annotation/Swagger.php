@@ -12,7 +12,7 @@ class Swagger extends Annotation
 {
     public $showInDocs = true;
     public $operationId;
-    public $description = "This is an example description.";
+    public $description;
     public $tags;
     public $consumes = array("application/json");
     public $produces = array("application/json");

@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation;
 class SwaggerParameter extends Annotation
 {
     public $name;
-    public $description = "Example description";
+    public $description;
     public $schema = "string";
     public $required = true;
     public $isArray = false;
