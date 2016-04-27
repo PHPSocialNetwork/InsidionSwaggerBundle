@@ -92,9 +92,14 @@ class RoutingProcessor
         foreach ($annotations as $annotation) {
             if ($annotation instanceof SwaggerResult) {
                 /* @var SwaggerResult $annotation */
-                $responses[$annotation->status] = array(
+                $response = array(
                     "description" => $annotation->description
                 );
+                if($annotation->schema !== null) {
+                    $schema = $this->processSchemaType($annotation);
+                    $response['schema'] = $schema;
+                }
+                $responses[$annotation->status] = $response;
             }
         }
         return $responses;
@@ -113,6 +118,7 @@ class RoutingProcessor
             return trim(substr($v, 1, -1));
         }, $matches[0]));
 
+        $allowedInUrl = array('string', 'number', 'integer', 'boolean', 'array', 'file');
         foreach ($pathRequirements as $pathRequirement) {
             if(strpos($pathRequirement, "_") === 0) continue;
             $parameters[] = array(
@@ -133,16 +139,38 @@ class RoutingProcessor
                     "name" => $annotation->name,
                     "description" => $annotation->description,
                     "required" => $annotation->required,
-                    "type" => $annotation->type,
+                    "schema" => $this->processSchemaType($annotation),
                 );
             } else {
+                if(array_search($annotation->schema, $allowedInUrl) === false) {
+                    throw new InvalidConfigurationException(sprintf("Schema type %s not allowed as path parameter!", $annotation->schema));
+                }
                 $parameters[$index]['description'] = $annotation->description;
-                $parameters[$index]['type'] = $annotation->type;
+                $parameters[$index]['type'] = $annotation->schema;
                 $parameters[$index]['required'] = $annotation->required;
             }
         }
 
         return $parameters;
+    }
+
+    private function processSchemaType($annotation) {
+        $schema = $annotation->schema;
+        if(strpos($schema, '#') === 0) {
+            // It is a reference to a definition
+            $schema = array(
+                "\$ref" => "#/definitions/" . substr($schema, 1)
+            );
+        }
+
+        if($annotation->isArray) {
+            $schema = array(
+                'type' => 'array',
+                'items' => $schema
+            );
+        }
+
+        return $schema;
     }
 
     private function findParameterInArray($parameters, $parameter) {

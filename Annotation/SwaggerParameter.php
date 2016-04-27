@@ -14,6 +14,7 @@ class SwaggerParameter extends Annotation
 {
     public $name;
     public $description = "Example description";
-    public $type = "string";
+    public $schema = "string";
     public $required = true;
+    public $isArray = false;
 }

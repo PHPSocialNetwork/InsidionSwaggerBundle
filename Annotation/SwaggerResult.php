@@ -13,4 +13,6 @@ class SwaggerResult extends Annotation
 {
     public $status = 200;
     public $description = "This is an example result description";
+    public $schema = null;
+    public $isArray = false;
 }

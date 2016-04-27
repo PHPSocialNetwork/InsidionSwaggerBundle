@@ -3,22 +3,21 @@
 namespace Insidion\SwaggerBundle\Cache;
 
 
-use Insidion\SwaggerBundle\Processor\RoutingProcessor;
 use Insidion\SwaggerBundle\Service\SwaggerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class SwaggerDocGenerator implements CacheWarmerInterface
 {
     /* @var SwaggerBuilder $swaggerBuilder */
     private $swaggerBuilder;
-    private $rootDir;
+    /* @var string $cacheDir **/
+    private $cacheDir;
 
-    public function __construct(SwaggerBuilder $builder, KernelInterface $kernel)
+    public function __construct(SwaggerBuilder $builder, $cacheDir)
     {
         $this->swaggerBuilder = $builder;
-        $this->rootDir = $kernel->getRootDir();
+        $this->cacheDir -> $cacheDir;
     }
 
     /**
@@ -45,6 +44,6 @@ class SwaggerDocGenerator implements CacheWarmerInterface
     {
 
         $fs = new FileSystem();
-        $fs->dumpFile($this->rootDir . '/swagger/swagger.json', $this->swaggerBuilder->buildSwagger());
+        $fs->dumpFile($this->cacheDir . '/swagger/swagger.json', $this->swaggerBuilder->buildSwagger());
     }
 }

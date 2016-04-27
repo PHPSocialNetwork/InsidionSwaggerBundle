@@ -16,4 +16,4 @@ services:
 
   swagger.definition.retriever:
     class: Insidion\SwaggerBundle\Service\SwaggerDefinitionRetriever
-    arguments: ['@service_container', '%kernel.root_dir%', '@swagger.external.filesystem']
+    arguments: ['@service_container', '%kernel.cache_dir%', '@swagger.external.filesystem']
