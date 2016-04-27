@@ -30,6 +30,7 @@ insidion_swagger:
 
 Above Configration will result in the following Swagger JSON: 
 
+```json
 {
   "produces": [
     "application\/json",
@@ -62,5 +63,5 @@ Above Configration will result in the following Swagger JSON:
   "paths": {},
   "definitions": {}
 }
-
+```
 Note that the paths and definitions will be added as you configure them.  
