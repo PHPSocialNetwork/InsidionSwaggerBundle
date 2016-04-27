@@ -17,7 +17,7 @@ class SwaggerDocGenerator implements CacheWarmerInterface
     public function __construct(SwaggerBuilder $builder, $cacheDir)
     {
         $this->swaggerBuilder = $builder;
-        $this->cacheDir -> $cacheDir;
+        $this->cacheDir = $cacheDir;
     }
 
     /**
