@@ -3,7 +3,7 @@
   "description": "Generate Swagger documentation",
   "keywords": ["bundle", "api", "doc", "swagger"],
   "type": "symfony-bundle",
-  "homepage": "https://github.com/Morlack/SwaggerBundle",
+  "homepage": "https://github.com/Morlack/InsidionSwaggerBundle",
   "license": "MIT",
   "authors": [{
     "name": "Mitchell Herrijgers"
@@ -13,5 +13,8 @@
     "symfony/filesystem": "~3.0",
     "symfony/framework-bundle": "~3.0"
   },
-  "minimum-stability": "dev"
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {"": "src/"}
+  }
 }
