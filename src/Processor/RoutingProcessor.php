@@ -134,8 +134,9 @@ class RoutingProcessor
             if(!$annotation instanceof SwaggerParameter) continue;
             $index = $this->findParameterInArray($parameters, $annotation->name);
             if($index === false) {
+                $in = ($annotation->isHeader) ? "header" : "body";
                 $parameters[] = array(
-                    "in" => "body",
+                    "in" => $in,
                     "name" => $annotation->name,
                     "description" => $annotation->description,
                     "required" => $annotation->required,

@@ -13,6 +13,7 @@ class OrdersController extends FOSRestController implements ClassResourceInterfa
      * @SwaggerResult(status="200", description="Shows the order", schema="#Order")
      * @SwaggerResult(status="404", description="This order does not exist")
      * @SwaggerParameter(name="id", required=true, description="Stupid ID", schema="integer")
+     * @SwaggerParameter(name="Authorization", required=true, description="Stupid header", schema="string", isHeader="true")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getAction($id)
