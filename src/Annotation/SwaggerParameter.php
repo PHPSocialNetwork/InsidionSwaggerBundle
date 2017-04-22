@@ -2,7 +2,6 @@
 
 namespace Insidion\SwaggerBundle\Annotation;
 
-
 use Doctrine\Common\Annotations\Annotation;
 
 /**
@@ -13,7 +12,8 @@ use Doctrine\Common\Annotations\Annotation;
 class SwaggerParameter extends Annotation
 {
     public $name;
-    public $description;
+    public $description = "";
+    public $in;
     public $schema = "string";
     public $required = true;
     public $isArray = false;

@@ -12,7 +12,7 @@ use Doctrine\Common\Annotations\Annotation;
 class SwaggerResult extends Annotation
 {
     public $status = 200;
-    public $description;
+    public $description = "";
     public $schema = null;
     public $isArray = false;
 }

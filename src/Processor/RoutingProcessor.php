@@ -122,7 +122,6 @@ class RoutingProcessor
         foreach ($pathRequirements as $pathRequirement) {
             if(strpos($pathRequirement, "_") === 0) continue;
             $parameters[] = array(
-                "in" => "path",
                 "name" => $pathRequirement,
                 "type" => "string",
                 "required" => true,
@@ -135,7 +134,7 @@ class RoutingProcessor
             $index = $this->findParameterInArray($parameters, $annotation->name);
             if($index === false) {
                 $parameters[] = array(
-                    "in" => "body",
+                    "in" => $this->processInType($annotation, false),
                     "name" => $annotation->name,
                     "description" => $annotation->description,
                     "required" => $annotation->required,
@@ -145,6 +144,7 @@ class RoutingProcessor
                 if(array_search($annotation->schema, $allowedInUrl) === false) {
                     throw new InvalidConfigurationException(sprintf("Schema type %s not allowed as path parameter!", $annotation->schema));
                 }
+                $parameters[$index]['in'] = $this->processInType($annotation, true);
                 $parameters[$index]['description'] = $annotation->description;
                 $parameters[$index]['type'] = $annotation->schema;
                 $parameters[$index]['required'] = $annotation->required;
@@ -171,6 +171,25 @@ class RoutingProcessor
         }
 
         return $schema;
+    }
+
+    /**
+     * @param SwaggerParameter $annotation
+     * @param bool $isPathParameter
+     * @return string
+     */
+    private function processInType(SwaggerParameter $annotation, $isPathParameter) {
+        $in = $annotation->in ?: ($isPathParameter ? 'path' : 'body');
+
+        if(!$isPathParameter && array_search($in, array('query', 'body', 'header', 'formData')) === false) {
+            throw new InvalidConfigurationException(sprintf("In '%s' not allowed for a non-path parameter!", $in));
+        }
+
+        if($isPathParameter && $in !== 'path') {
+            throw new InvalidConfigurationException(sprintf("In must be set to 'path' for a path parameter!", $in));
+        }
+
+        return $in;
     }
 
     private function findParameterInArray($parameters, $parameter) {
