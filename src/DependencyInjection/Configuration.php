@@ -51,6 +51,18 @@ class Configuration implements ConfigurationInterface
                         ->prototype('scalar')->end()
                     ->end()
 
+                    ->arrayNode("securityDefinitions")
+                        ->children()
+                            ->arrayNode("Bearer")
+                                ->children()
+                                    ->scalarNode("type")->isRequired()->end()
+                                    ->scalarNode("name")->isRequired()->end()
+                                    ->scalarNode("in")->isRequired()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+
                     // Values for the info object in the swagger.json
                     ->arrayNode("info")
                         ->isRequired()

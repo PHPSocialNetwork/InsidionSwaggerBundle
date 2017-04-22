@@ -13,6 +13,11 @@ insidion_swagger:
     produces: ['application/json', 'application/xml']
     consumes: ['application/json', 'application/xml']
     schemes: ['http', 'https']
+    securityDefinitions:
+      Bearer:
+        type: apiKey
+        name: Authorization
+        in: header
     info:
       title: 'My Awesome REST API'                                                  #REQUIRED
       version: '0.0.1'                                                              #REQUIRED
@@ -44,6 +49,13 @@ Above Configration will result in the following Swagger JSON:
     "http",
     "https"
   ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type":"apiKey",
+      "name":"Authorization",
+      "in":"header"
+    }
+  },
   "info": {
     "title": "My Awesome REST API",
     "version": "0.0.1",
@@ -65,4 +77,6 @@ Above Configration will result in the following Swagger JSON:
 }
 ```
 
-Note that the paths and definitions will be added as you configure them.  
+Note that the paths and definitions will be added as you configure them.
+
+Note that securityDefinitions is optional and by default is not generated in Swagger JSON.
