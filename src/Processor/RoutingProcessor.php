@@ -96,7 +96,7 @@ class RoutingProcessor
                     "description" => $annotation->description
                 );
                 if($annotation->schema !== null) {
-                    $schema = $this->processSchemaType($annotation);
+                    $schema = $this->processSchemaType($annotation, false);
                     $response['schema'] = $schema;
                 }
                 $responses[$annotation->status] = $response;
@@ -111,51 +111,74 @@ class RoutingProcessor
      * @return array Parameters for this call
      */
     private function createParametersForRoute(Route $route, $annotations) {
+        $pathParameters = $this->getPathParameters($route);
         $parameters = array();
 
-        preg_match_all('/{[_a-zA-Z]*}*/', $route->getPath(), $matches);
-        $pathRequirements = array_filter(array_map(function($v) {
-            return trim(substr($v, 1, -1));
-        }, $matches[0]));
-
-        $allowedInUrl = array('string', 'number', 'integer', 'boolean', 'array', 'file');
-        foreach ($pathRequirements as $pathRequirement) {
-            if(strpos($pathRequirement, "_") === 0) continue;
-            $parameters[] = array(
-                "name" => $pathRequirement,
-                "type" => "string",
-                "required" => true,
+        foreach ($pathParameters as $pathParameter) {
+            $parameters[$pathParameter] = array(
+                'name'          => $pathParameter,
+                'in'            => 'path',
+                'required'      => true,
+                'type'          => 'string',
             );
         }
 
         /* @var SwaggerParameter $annotation*/
-        foreach($annotations as $annotation) {
-            if(!$annotation instanceof SwaggerParameter) continue;
-            $index = $this->findParameterInArray($parameters, $annotation->name);
-            if($index === false) {
-                $parameters[] = array(
-                    "in" => $this->processInType($annotation, false),
-                    "name" => $annotation->name,
-                    "description" => $annotation->description,
-                    "required" => $annotation->required,
-                    "schema" => $this->processSchemaType($annotation),
-                );
-            } else {
-                if(array_search($annotation->schema, $allowedInUrl) === false) {
-                    throw new InvalidConfigurationException(sprintf("Schema type %s not allowed as path parameter!", $annotation->schema));
-                }
-                $parameters[$index]['in'] = $this->processInType($annotation, true);
-                $parameters[$index]['description'] = $annotation->description;
-                $parameters[$index]['type'] = $annotation->schema;
-                $parameters[$index]['required'] = $annotation->required;
+        foreach ($annotations as $annotation) {
+            if (!$annotation instanceof SwaggerParameter) {
+                continue;
             }
+
+            $isPathParameter = in_array($annotation->name, $pathParameters);
+            $in = $this->processInType($annotation, $isPathParameter);
+            $typeKey = $in === 'body' ? 'schema' : 'type';
+            $parameterList = array(
+                'name'          => $annotation->name,
+                'description'   => $annotation->description,
+                'in'            => $in,
+                'required'      => $annotation->required,
+                $typeKey        => $this->processSchemaType($annotation, $typeKey === 'type')
+            );
+
+            $parameters[$annotation->name] = $parameterList;
         }
 
-        return $parameters;
+        return array_values($parameters);
     }
 
-    private function processSchemaType($annotation) {
+    /**
+     * @param Route $route
+     * @return array
+     */
+    private function getPathParameters(Route $route)
+    {
+        $routeParameters = array();
+
+        preg_match_all('/{[_a-zA-Z]*}*/', $route->getPath(), $matches);
+        $pathRequirements = array_filter(array_map(function ($v) {
+            return trim(substr($v, 1, -1));
+        }, $matches[0]));
+
+        foreach ($pathRequirements as $pathRequirement) {
+            if (strpos($pathRequirement, "_") === 0) continue;
+            $routeParameters[] = $pathRequirement;
+        }
+
+        return $routeParameters;
+    }
+
+    /**
+     * @param SwaggerParameter|SwaggerResult $annotation
+     * @param bool $onlyBasicType
+     * @return array|string
+     */
+    private function processSchemaType($annotation, $onlyBasicType) {
         $schema = $annotation->schema;
+
+        if ($onlyBasicType && !in_array($schema, array('string', 'number', 'integer', 'boolean', 'array', 'file'))) {
+            throw new InvalidConfigurationException(sprintf("Type %s not allowed as type parameter!", $annotation->schema));
+        }
+
         if(strpos($schema, '#') === 0) {
             // It is a reference to a definition
             $schema = array(
@@ -190,15 +213,6 @@ class RoutingProcessor
         }
 
         return $in;
-    }
-
-    private function findParameterInArray($parameters, $parameter) {
-        foreach($parameters as $key => $value)
-        {
-            if ($value['name'] === $parameter)
-                return $key;
-        }
-        return false;
     }
 
     /**
