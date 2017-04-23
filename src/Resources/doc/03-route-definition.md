@@ -48,7 +48,7 @@ The @Swagger annotation can have the following fields:
 |:---------|:--------------|:------------|
 | showInDocs | true | Whether to process this action and show it in the swagger.json. |
 | operationId | null | REQUIRED - Name of the action (Must be a human readable name). |
-| description | null | Describes what this action does. |
+| description | "" | Describes what this action does. |
 | tags | null | Array of tags applying to this action. Makes the SwaggerUI easier to navigate |
 | consumes | ['application/json'] | MIME-types this action can consume |
 | produces | ['application/json'] | MIME-types this action can procude |
@@ -57,15 +57,16 @@ The @Swagger annotation can have the following fields:
 
 The @SwaggerAnnotation specifies a parameter in your call. This can be one in your path (such as /orders/{id}) or one in the POST body of the HTTP request.
 Even though you can specify it further, every path parameter without a preceding underscore will be added. You can further specify, as in the example above, linked by name.
-If a parameter is not in a route and specified in an annotation it is expected to be of type body. 
+If a parameter is not in a route and specified in an annotation, then it's type is defined as ```in``` property with fallback to body if not specified'. 
 
 | Property | Default Value | Description |
 |:---------|:--------------|:------------|
 | name | null | key of the parameter. In above example it would be 'id'. |
-| description | A description of the parameter. Why does it matter in this call? |
+| description | "" | A description of the parameter. Why does it matter in this call? |
+| in | null | Place where the parameter is used. For route parameter default (and only valid) value is ```path```. For non-route parameter valid options are: ```body``` (default), ```query```, ```header```, ```formData```  |
 | required | true | Whether the parameter is required for the call to work or not. |
 | isArray | false | Whether the parameter is an array of multiple objects. |
-| schema | string | Here you can define the type of parameter. It can be a simple type or a schema. Read more about schemas in 04-schemas.md. |
+| schema | "string" | Here you can define the type of parameter. It can be a simple type or a schema. Read more about schemas in 04-schemas.md. |
 
 ## @SwaggerResult
 
@@ -74,6 +75,6 @@ An HTTP call can yield multiple response types. Such as 200, 201, 204, 500, and 
 | Property | Default Value | Description |
 |:---------|:--------------|:------------|
 | status | 200 | Status code returned with this response. Should be unique. |
-| description | null | Description of the response. |
-| schema | string | Here you can define the type of response. It can be a simple type or a schema. Read more about schemas in 04-schemas.md. |
+| description | "" | Description of the response. |
+| schema | "string" | Here you can define the type of response. It can be a simple type or a schema. Read more about schemas in 04-schemas.md. |
 | isArray | false | Whether the response is an array of multiple objects. |
