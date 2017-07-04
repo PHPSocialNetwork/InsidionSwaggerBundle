@@ -17,5 +17,5 @@ class SwaggerParameter extends Annotation
     public $schema = "string";
     public $required = true;
     public $isArray = false;
-    public $isHeader = false;
+    public $in = "body";
 }

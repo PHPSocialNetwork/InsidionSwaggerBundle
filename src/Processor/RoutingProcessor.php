@@ -134,14 +134,23 @@ class RoutingProcessor
             if(!$annotation instanceof SwaggerParameter) continue;
             $index = $this->findParameterInArray($parameters, $annotation->name);
             if($index === false) {
-                $in = ($annotation->isHeader) ? "header" : "body";
-                $parameters[] = array(
-                    "in" => $in,
-                    "name" => $annotation->name,
-                    "description" => $annotation->description,
-                    "required" => $annotation->required,
-                    "schema" => $this->processSchemaType($annotation),
-                );
+                if($annotation->in == "body"){
+                    $parameters[] = array(
+                        "in" => $annotation->in,
+                        "name" => $annotation->name,
+                        "description" => $annotation->description,
+                        "required" => $annotation->required,
+                        "schema" => $this->processSchemaType($annotation),
+                    );
+                } else {
+                    $parameters[] = array(
+                        "in" => $annotation->in,
+                        "name" => $annotation->name,
+                        "description" => $annotation->description,
+                        "required" => $annotation->required,
+                        "type" => $annotation->schema,
+                    );
+                }
             } else {
                 if(array_search($annotation->schema, $allowedInUrl) === false) {
                     throw new InvalidConfigurationException(sprintf("Schema type %s not allowed as path parameter!", $annotation->schema));
