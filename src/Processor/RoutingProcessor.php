@@ -97,7 +97,13 @@ class RoutingProcessor
                 );
                 if($annotation->schema !== null) {
                     $schema = $this->processSchemaType($annotation);
-                    $response['schema'] = $schema;
+
+                    $nativeSchemas = array('string', 'number', 'integer', 'boolean', 'file');
+                    if( array_search($annotation->schema, $nativeSchemas) != false) {
+                        $response['schema']['type'] = $annotation->schema;
+                    } else {
+                        $response['schema'] = $schema;
+                    }
                 }
                 $responses[$annotation->status] = $response;
             }
@@ -134,13 +140,23 @@ class RoutingProcessor
             if(!$annotation instanceof SwaggerParameter) continue;
             $index = $this->findParameterInArray($parameters, $annotation->name);
             if($index === false) {
-                $parameters[] = array(
-                    "in" => "body",
-                    "name" => $annotation->name,
-                    "description" => $annotation->description,
-                    "required" => $annotation->required,
-                    "schema" => $this->processSchemaType($annotation),
-                );
+                if($annotation->in == "body"){
+                    $parameters[] = array(
+                        "in" => $annotation->in,
+                        "name" => $annotation->name,
+                        "description" => $annotation->description,
+                        "required" => $annotation->required,
+                        "schema" => $this->processSchemaType($annotation),
+                    );
+                } else {
+                    $parameters[] = array(
+                        "in" => $annotation->in,
+                        "name" => $annotation->name,
+                        "description" => $annotation->description,
+                        "required" => $annotation->required,
+                        "type" => $annotation->schema,
+                    );
+                }
             } else {
                 if(array_search($annotation->schema, $allowedInUrl) === false) {
                     throw new InvalidConfigurationException(sprintf("Schema type %s not allowed as path parameter!", $annotation->schema));
