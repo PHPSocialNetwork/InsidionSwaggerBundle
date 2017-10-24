@@ -97,7 +97,13 @@ class RoutingProcessor
                 );
                 if($annotation->schema !== null) {
                     $schema = $this->processSchemaType($annotation);
-                    $response['schema'] = $schema;
+
+                    $nativeSchemas = array('string', 'number', 'integer', 'boolean', 'file');
+                    if( array_search($annotation->schema, $nativeSchemas) != false) {
+                        $response['schema']['type'] = $annotation->schema;
+                    } else {
+                        $response['schema'] = $schema;
+                    }
                 }
                 $responses[$annotation->status] = $response;
             }
