@@ -3,6 +3,7 @@
 namespace Insidion\SwaggerBundle\Processor;
 
 
+use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Insidion\SwaggerBundle\Annotation\Swagger;
 use Insidion\SwaggerBundle\Annotation\SwaggerParameter;
@@ -21,8 +22,17 @@ use Symfony\Component\Routing\Router;
  */
 class RoutingProcessor
 {
+    /**
+     * @var array
+     */
+    protected static $ALLOWED_HTTP_METHODS = [
+      'GET', 'POST', 'DELETE', 'PUT',
+      'PATCH', 'HEAD', 'OPTIONS', 'TRACE'
+    ];
+
     /* @var RouteCollection $routeCollection */
     private $routeCollection;
+
     /* @var array $config */
     private $config;
 
@@ -49,16 +59,40 @@ class RoutingProcessor
 
             /** @var Swagger $swaggerAnnotation */
             $swaggerAnnotation = $reader->getMethodAnnotation($routeMethod, Swagger::class);
-            if ($swaggerAnnotation === null || $swaggerAnnotation->showInDocs === false) continue;
+            if ($swaggerAnnotation === null || $swaggerAnnotation->showInDocs === false) {
+                continue;
+            }
+
+            /**
+             * Throw an exception if the developper
+             * supplied an unsupported method
+             */
+            $invalidHttpMethod = array_diff($route->getMethods(), self::$ALLOWED_HTTP_METHODS);
+            if($invalidHttpMethod){
+                if(count($invalidHttpMethod) === 1){
+                    throw new \InvalidArgumentException(
+                      'Path ' . $route->getPath() . ' : Swagger does not supports this HTTP method: ' . implode(', ', $invalidHttpMethod)
+                    );
+                }else{
+                    throw new \InvalidArgumentException(
+                      'Path ' . $route->getPath() . ' : Swagger does not supports these HTTP methods: ' . implode(', ', $invalidHttpMethod)
+                    );
+                }
+            }
 
             $path = explode('.', $route->getPath())[0];
-            if (!isset($paths[$path])) $paths[$path] = array();
+            if (!isset($paths[$path])){
+                $paths[$path] = array();
+            }
 
             // Prepare the data for the route.
             $allAnnotations = $reader->getMethodAnnotations($routeMethod);
             $routeData = array(
                 "operationId" => $this->getOperationId($swaggerAnnotation, $this->extractControllerDefaultFromRoute($route)),
-                "summary" => $swaggerAnnotation->description,
+                "summary" => $swaggerAnnotation->summary,
+                "description" => $swaggerAnnotation->description,
+                "deprecated" => $swaggerAnnotation->deprecated,
+                "security" => $swaggerAnnotation->security,
                 "produces" => $swaggerAnnotation->produces,
                 "consumes" => $swaggerAnnotation->consumes,
                 "responses" => $this->createResponsesForRoute($allAnnotations),
@@ -68,7 +102,6 @@ class RoutingProcessor
             if ($swaggerAnnotation->tags !== null) {
                 $routeData["tags"] = $swaggerAnnotation->tags;
             }
-
 
             // Set the data for each method. Needed for when a route can handle multiple methods.
             foreach ($route->getMethods() as $method) {
@@ -154,7 +187,11 @@ class RoutingProcessor
         return $parameters;
     }
 
-    private function processSchemaType($annotation) {
+    /**
+     * @param $annotation
+     * @return array
+     */
+    private function processSchemaType(Annotation $annotation) {
         $schema = $annotation->schema;
         if(strpos($schema, '#') === 0) {
             // It is a reference to a definition
@@ -173,6 +210,11 @@ class RoutingProcessor
         return $schema;
     }
 
+    /**
+     * @param $parameters
+     * @param $parameter
+     * @return bool|string
+     */
     private function findParameterInArray($parameters, $parameter) {
         foreach($parameters as $key => $value)
         {

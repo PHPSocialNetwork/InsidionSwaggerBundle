@@ -1,0 +1,45 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    {% block stylesheets %}
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/bundles/insidionswagger/css/swagger-ui.css" >
+    {% endblock %}
+    {% block favicons %}
+        <link rel="icon" type="image/png" href="/bundles/insidionswagger/images/favicon/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="/bundles/insidionswagger/images/favicon/favicon-16x16.png" sizes="16x16" />
+    {% endblock %}
+    {% block inline_stylesheets %}
+        <style>
+            html
+            {
+                box-sizing: border-box;
+                overflow: -moz-scrollbars-vertical;
+                overflow-y: scroll;
+            }
+            *,
+            *:before,
+            *:after
+            {
+                box-sizing: inherit;
+            }
+
+            body {
+                margin:0;
+                background: #fafafa;
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+{% block javascripts %}
+    <script src="/bundles/insidionswagger/js/swagger-ui-bundle.js"></script>
+    <script src="/bundles/insidionswagger/js/swagger-ui-standalone-preset.js"></script>
+{% endblock %}
+{% block inline_javascripts %}{% endblock %}
+</body>
+</html>
