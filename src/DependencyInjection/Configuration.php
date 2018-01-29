@@ -21,7 +21,6 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('insidion_swagger');
 
         $rootNode->children()
-            // Caching
             ->booleanNode("cache")
                 ->defaultTrue()
             ->end()
@@ -32,24 +31,34 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode("produces")
                         ->info("This defines the produces MIME types in the swagger.json info object. See http://swagger.io/specification/#mimeTypes")
                         ->requiresAtLeastOneElement()
-                        ->defaultValue(array('application/json'))
+                        ->defaultValue(['application/json'])
                         ->prototype('scalar')->end()
                     ->end()
                     ->arrayNode("consumes")
                         ->info("This defines the consumes MIME type in the swagger.json info object. See http://swagger.io/specification/#mimeTypes")
                         ->requiresAtLeastOneElement()
-                        ->defaultValue(array('application/json'))
+                        ->defaultValue(['application/json'])
                         ->prototype('scalar')->end()
                     ->end()
                     ->arrayNode("schemes")
                         ->info("This defines the schemes in the swagger.json info object. Values MUST be from the list: \"http\", \"https\", \"ws\", \"wss\".")
                         ->requiresAtLeastOneElement()
-                        ->defaultValue(array('http'))
+                        ->defaultValue(['http'])
+                        ->validate()
+                        ->always(function ($values) {
+                          foreach ((array) $values as $val) {
+                              if (!in_array($val, ["http", "https", "ws", "wss"])) {
+                                  throw new \Symfony\Component\Config\Definition\Exception\InvalidTypeException("Invalid value ".$val);
+                              }
+                          }
+                          return (array) $values;
+                        })
+                        ->end()
                         ->prototype('scalar')->end()
                     ->end()
                     ->arrayNode('securityDefinitions')
                         ->info('Lorem ipsum')
-                        ->defaultValue(array())
+                        ->defaultValue([])
                         ->prototype('array')
                             //->ignoreExtraKeys()
                             ->children()
@@ -64,7 +73,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('tags')
                         ->info('Lorem ipsum')
-                        ->defaultValue(array())
+                        ->defaultValue([])
                         ->prototype('array')
                             ->children()
                                 ->scalarNode('name')->isRequired()->cannotBeEmpty()->end()
@@ -82,12 +91,12 @@ class Configuration implements ConfigurationInterface
                         ->isRequired()
                         ->children()
                             ->scalarNode("title")->isRequired()->end()
-                            ->scalarNode("description")->end()
-                            ->scalarNode("termsOfService")->end()
-                            ->scalarNode("version")->isRequired()->end()
+                            ->scalarNode("description")->defaultValue('')->end()
+                            ->scalarNode("termsOfService")->defaultValue('')->end()
+                            ->scalarNode("version")->defaultValue('')->isRequired()->end()
                             ->arrayNode("contact")
                                 ->children()
-                                    ->scalarNode("name")->end()
+                                    ->scalarNode("name")->isRequired()->end()
                                     ->scalarNode("url")->end()
                                     ->scalarNode("email")->end()
                                 ->end()
