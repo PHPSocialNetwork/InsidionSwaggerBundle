@@ -105,6 +105,13 @@ class RoutingProcessor
 
             // Set the data for each method. Needed for when a route can handle multiple methods.
             foreach ($route->getMethods() as $method) {
+                if(in_array($method, ['GET', 'HEAD']) && !empty($routeData["parameters"])){
+                    foreach ($routeData["parameters"] as $parameter) {
+                        if($parameter['in'] === 'body'){
+                            throw new \RuntimeException(sprintf('Operation "%s": Request with GET/HEAD method cannot have body.', $routeData['operationId']));
+                        }
+                    }
+                }
                 $paths[$path][strtolower($method)] = $routeData;
             }
         }
@@ -130,7 +137,12 @@ class RoutingProcessor
                 );
                 if($annotation->schema !== null) {
                     $schema = $this->processSchemaType($annotation);
-                    $response['schema'] = $schema;
+                    $nativeSchemas = array('string', 'number', 'integer', 'boolean', 'file');
+                    if( array_search($annotation->schema, $nativeSchemas) != false) {
+                        $response['schema']['type'] = $annotation->schema;
+                    } else {
+                        $response['schema'] = $schema;
+                    }
                 }
                 $responses[$annotation->status] = $response;
             }
@@ -168,11 +180,11 @@ class RoutingProcessor
             $index = $this->findParameterInArray($parameters, $annotation->name);
             if($index === false) {
                 $parameters[] = array(
-                    "in" => "body",
-                    "name" => $annotation->name,
-                    "description" => $annotation->description,
-                    "required" => $annotation->required,
-                    "schema" => $this->processSchemaType($annotation),
+                  "in" => $annotation->in,
+                  "name" => $annotation->name,
+                  "description" => $annotation->description,
+                  "required" => $annotation->required,
+                  "schema" => $annotation->in == "body" ? $this->processSchemaType($annotation) : $annotation->schema,
                 );
             } else {
                 if(array_search($annotation->schema, $allowedInUrl) === false) {
