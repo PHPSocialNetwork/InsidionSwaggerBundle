@@ -28,12 +28,21 @@ class InsidionSwaggerExtension extends Extension
         }
 
         if (isset($config['swagger'])) {
-            if ($config['swagger']['host'] === false) unset($config['swagger']['host']);
-            if ($config['swagger']['basePath'] === false) unset($config['swagger']['basePath']);
+            if ($config['swagger']['host'] === false){
+                unset($config['swagger']['host']);
+            }
+            if ($config['swagger']['basePath'] === false){
+                unset($config['swagger']['basePath']);
+            }
 
             $container->setParameter("morlack.swagger.info", $config['swagger']);
+            $container->setParameter("morlack.swagger.cache", [
+              'enabled' => $config['cache'],
+              'service' => $config['cache_service']
+            ]);
         } else {
             $container->setParameter("morlack.swagger.info", array());
+            $container->setParameter("morlack.swagger.cache", array());
         }
 
 

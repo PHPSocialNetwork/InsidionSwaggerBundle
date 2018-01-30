@@ -22,6 +22,12 @@ class SwaggerController extends Controller
         /**
          * Not a JSON response since this came from a string...
          */
-        return new Response($this->get("swagger.definition.retriever")->retrieve());
+        return new Response(
+          $this->get("swagger.definition.retriever")->retrieve(),
+          Response::HTTP_OK,
+          [
+            'Content-Type' => 'Application/json'
+          ]
+        );
     }
 }

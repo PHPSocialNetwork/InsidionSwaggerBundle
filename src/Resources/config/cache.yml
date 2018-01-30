@@ -1,6 +1,7 @@
 services:
   swagger.cache:
     class: Insidion\SwaggerBundle\Cache\SwaggerDocGenerator
-    arguments: ['@swagger.definition.builder', '%kernel.cache_dir%']
+    # As we need to dynamically get a service, we must inject the container directly :/
+    arguments: ['@service_container', '@swagger.definition.builder', '%kernel.cache_dir%']
     tags:
       - {name: 'kernel.cache_warmer'}

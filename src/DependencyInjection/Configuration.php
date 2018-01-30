@@ -21,10 +21,13 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('insidion_swagger');
 
         $rootNode->children()
-            ->booleanNode("cache")
+            ->booleanNode('cache')
                 ->defaultTrue()
             ->end()
-            ->arrayNode("swagger")
+            ->scalarNode('cache_service')
+                ->defaultFalse()
+            ->end()
+            ->arrayNode('swagger')
                 ->children()
                     ->scalarNode('host')->defaultFalse()->end()
                     ->scalarNode('basePath')->defaultFalse()->end()
