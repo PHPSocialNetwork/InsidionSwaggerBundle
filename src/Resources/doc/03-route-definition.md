@@ -9,10 +9,11 @@ Consider this piece of PHP code:
 class OrdersController extends FOSRestController implements ClassResourceInterface
 {
     /**
-     * @Swagger(showInDocs=true, operationId="orderShow", tags={"order", "show"})
-     * @SwaggerResult(status="200", description="Shows the order", schema="#Order")
-     * @SwaggerResult(status="404", description="This order does not exist")
+     * @Swagger(showInDocs=true, operationId="homepage_post", tags={"order"}, description="A description", summary="A summary")
+     * @SwaggerResult(status="200", description="Shows the order", schema="#Order", description="A description")
+     * @SwaggerResult(status="404", description="This order does not exist", description="A description")
      * @SwaggerParameter(name="id", required=true, description="Stupid ID", schema="integer")
+     * @SwaggerParameter(name="id2", required=true, description="Stupid ID", schema="integer", in="header", description="A description")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getAction($id)
@@ -49,9 +50,12 @@ The @Swagger annotation can have the following fields:
 | showInDocs | true | Whether to process this action and show it in the swagger.json. |
 | operationId | null | REQUIRED - Name of the action (Must be a human readable name). |
 | description | null | Describes what this action does. |
+| summary | null | Describes shortly what this action does. |
 | tags | null | Array of tags applying to this action. Makes the SwaggerUI easier to navigate |
 | consumes | ['application/json'] | MIME-types this action can consume |
-| produces | ['application/json'] | MIME-types this action can procude |
+| produces | ['application/json'] | MIME-types this action can produce |
+| deprecated | false | Whether to deprecate this action or not |
+| security | null | Implement a security directive as configured in config.yml, e.g: `security={{"ApiTknAuth"={}}, {"ApiTknAuth2"={}}}` |
 
 ## @SwaggerParameter
 
@@ -65,6 +69,7 @@ If a parameter is not in a route and specified in an annotation it is expected t
 | description | A description of the parameter. Why does it matter in this call? |
 | required | true | Whether the parameter is required for the call to work or not. |
 | isArray | false | Whether the parameter is an array of multiple objects. |
+| in | string | A string that describe the location of the parameter. Enum ['path', 'query', 'header', 'cookie'] |
 | schema | string | Here you can define the type of parameter. It can be a simple type or a schema. Read more about schemas in 04-schemas.md. |
 
 ## @SwaggerResult

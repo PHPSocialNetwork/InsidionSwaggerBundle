@@ -45,8 +45,6 @@ class InsidionSwaggerExtension extends Extension
             $container->setParameter("morlack.swagger.cache", array());
         }
 
-
-
         $loader->load('common.yml');
     }
 }
