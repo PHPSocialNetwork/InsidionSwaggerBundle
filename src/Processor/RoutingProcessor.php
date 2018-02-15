@@ -27,7 +27,7 @@ class RoutingProcessor
      */
     protected static $ALLOWED_HTTP_METHODS = [
       'GET', 'POST', 'DELETE', 'PUT',
-      'PATCH', 'HEAD', 'OPTIONS', 'TRACE'
+      'PATCH', 'HEAD', 'OPTIONS'
     ];
 
     /* @var RouteCollection $routeCollection */
@@ -107,6 +107,10 @@ class RoutingProcessor
 
             // Set the data for each method. Needed for when a route can handle multiple methods.
             foreach ($route->getMethods() as $method) {
+                $methodKey = strtolower($method);
+                $paths[$path][$methodKey] = $routeData;
+                $paths[$path][$methodKey]['operationId'] = str_ireplace('{method}', $methodKey, $paths[$path][$methodKey]['operationId']);
+
                 if(in_array($method, ['GET', 'HEAD']) && !empty($routeData["parameters"])){
                     foreach ($routeData["parameters"] as $parameter) {
                         if($parameter['in'] === 'body'){
@@ -114,7 +118,6 @@ class RoutingProcessor
                         }
                     }
                 }
-                $paths[$path][strtolower($method)] = $routeData;
             }
         }
 

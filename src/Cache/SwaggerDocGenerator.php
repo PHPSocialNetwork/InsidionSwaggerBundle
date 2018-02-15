@@ -97,11 +97,11 @@ class SwaggerDocGenerator implements CacheWarmerInterface
     {
         if($this->cacheService){
             $cacheItem = $this->cacheService->getItem('__swagger_json__');
-            $cacheItem->set($this->swaggerBuilder->buildSwagger())->expiresAfter(86400);
+            $cacheItem->set($this->swaggerBuilder->getJsonSwaggerBuild())->expiresAfter(86400);
             $this->cacheService->save($cacheItem);
         }else{
             $fs = new FileSystem();
-            $fs->dumpFile($this->cacheDir . '/swagger/swagger.json', $this->swaggerBuilder->buildSwagger());
+            $fs->dumpFile($this->cacheDir . '/swagger/swagger.json', $this->swaggerBuilder->getJsonSwaggerBuild());
         }
     }
 }

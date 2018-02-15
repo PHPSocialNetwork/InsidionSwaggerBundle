@@ -30,22 +30,32 @@ class SwaggerBuilder
     }
 
     /**
-     * Combines the loose parts to a complete whole, then encodes it in json and returns it
+     * Combines the loose parts to a complete whole
      *
-     * @return string Swagger JSON
+     * @return array
      */
-    public function buildSwagger()
+    public function getSwaggerBuild()
     {
         $swagger = $this->swaggerConfig;
-        $swagger['swagger'] = '2.0';
-
+        $swagger[ 'swagger' ] = '2.0';
 
         $paths = $this->routingProcessor->process();
-        if (count($paths) > 0) $swagger['paths'] = $paths;
+        if (count($paths) > 0) {
+            $swagger[ 'paths' ] = $paths;
+        }
         $schemes = $this->schemaProcessor->process();
-        if (count($schemes) > 0) $swagger['definitions'] = $schemes;
+        if (count($schemes) > 0) {
+            $swagger[ 'definitions' ] = $schemes;
+        }
 
+        return $swagger;
+    }
 
-        return json_encode($swagger);
+    /**
+     * @return string
+     */
+    public function getJsonSwaggerBuild()
+    {
+       return json_encode($this->getSwaggerBuild());
     }
 }

@@ -16,17 +16,34 @@
 
 namespace Insidion\SwaggerBundle\DataCollector;
 
+use Insidion\SwaggerBundle\Service\SwaggerBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\RouterInterface;
 
 class SwaggerCollector extends DataCollector
 {
     /**
-     * SwaggerCollector constructor.
+     * @var SwaggerBuilder $swaggerBuilder
      */
-    public function __construct()
+    private $swaggerBuilder;
+
+    /**
+     * @var RouterInterface $swaggerBuilder
+     */
+    private $router;
+
+    /**
+     * SwaggerCollector constructor.
+     * @param SwaggerBuilder $builder
+     * @param RouterInterface $Router
+     */
+    public function __construct(SwaggerBuilder $builder, RouterInterface $Router)
     {
+        $this->swaggerBuilder = $builder;
+        $this->router = $Router;
     }
 
     /**
@@ -36,14 +53,31 @@ class SwaggerCollector extends DataCollector
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
+        $swaggerBuild = $this->swaggerBuilder->getSwaggerBuild();
+        $paths = 0;
+
+        try {
+            $swagger_url = $this->router->generate('insidion_swagger_index');
+        } catch (RouteNotFoundException $e) {
+            $swagger_url = '';
+        }
+
+        if (!empty($swaggerBuild[ 'paths' ])) {
+            foreach ($swaggerBuild[ 'paths' ] as $path) {
+                foreach ($path as $method) {
+                    $paths++;
+                }
+            }
+        }
         $this->data = [
-          'cache_enabled' => (bool) mt_rand(0, 1),
+          'cache_enabled' => (bool)mt_rand(0, 1),
+          'swagger_url' => $swagger_url,
           'stats' => [
-            'routes' => mt_rand(2, 50),
-            'tags' => mt_rand(2, 50),
-            'models' => mt_rand(5, 50),
-            'schemes' => mt_rand(1, 4),
-            'authorizations' => 3,
+            'routes' => $paths,
+            'tags' => isset($swaggerBuild[ 'tags' ]) ? count($swaggerBuild[ 'tags' ]) : 0,
+            'models' => isset($swaggerBuild[ 'definitions' ]) ? count($swaggerBuild[ 'definitions' ]) : 0,
+            'schemes' => isset($swaggerBuild[ 'schemes' ]) ? count($swaggerBuild[ 'schemes' ]) : 0,
+            'authorizations' => isset($swaggerBuild[ 'securityDefinitions' ]) ? count($swaggerBuild[ 'securityDefinitions' ]) : 0,
           ],
         ];
     }
@@ -62,6 +96,14 @@ class SwaggerCollector extends DataCollector
     public function getCacheEnabled()
     {
         return $this->data[ 'cache_enabled' ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSwaggerUrl()
+    {
+        return $this->data[ 'swagger_url' ];
     }
 
     /**

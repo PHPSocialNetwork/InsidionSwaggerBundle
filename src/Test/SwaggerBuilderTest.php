@@ -12,7 +12,7 @@ class SwaggerBuilderTest extends WebTestCase
 {
     public function testCreate() {
         $swaggerBuilder = new SwaggerBuilder(array("test_property" => "test"), $this->getRoutingMock(), $this->getSchemaMock());
-        $result = $swaggerBuilder->buildSwagger();
+        $result = $swaggerBuilder->getJsonSwaggerBuild();
         $this->assertEquals("{\"test_property\":\"test\",\"swagger\":\"2.0\",\"paths\":{\"test\":\"test-result\"},\"definitions\":{\"Address\":{\"type\":\"string\"}}}", $result);
     }
 

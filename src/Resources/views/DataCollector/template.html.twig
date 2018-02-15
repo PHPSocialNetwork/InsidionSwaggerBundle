@@ -13,12 +13,8 @@
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
 {% block toolbar %}
-
-    {% if collector.stats.routes < 1 %}
-        {% set block_status = 'red' %}
-    {% else %}
-        {% set block_status = 'green' %}
-    {% endif %}
+    {% set has_green_status = false %}
+    {% set has_red_status = false %}
     {% set icon %}
         <span class="icon">{{ include('@InsidionSwagger/DataCollector/icon.svg') }}</span>
         <span class="sf-toolbar-value">{{ collector.stats.routes }}</span>
@@ -27,9 +23,16 @@
     {% set text %}
         <div class="sf-toolbar-info-group">
             <div class="sf-toolbar-info-piece">
-                <b>See more</b>
+                <b>Swagger UI</b>
                 <span>
-                    <a href="javascript:;">Swagger UI</a>
+                    {% if collector.swaggerUrl %}
+                        <a href="{{ collector.swaggerUrl }}">See more</a>
+                     {% else %}
+                        {% set has_red_status = true %}
+                        <span class="sf-toolbar-status sf-toolbar-status-red">
+                            <abbr title="Route 'insidion_swagger_index' not declared">Route not setup</abbr>
+                        </span>
+                    {% endif %}
                 </span>
             </div>
             <div class="sf-toolbar-info-piece">
@@ -44,26 +47,70 @@
         <div class="sf-toolbar-info-group">
             <div class="sf-toolbar-info-piece">
                 <b>Routes</b>
-                <span class="sf-toolbar-status">{{ collector.stats.routes }}</span>
+                {% if collector.stats.routes %}
+                    {% set has_green_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.stats.routes }}</span>
+                {% else %}
+                    {% set has_red_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.stats.routes }}</span>
+                {% endif %}
             </div>
             <div class="sf-toolbar-info-piece">
                 <b>Tags</b>
-                <span class="sf-toolbar-status">{{ collector.stats.tags }}</span>
+                {% if collector.stats.tags %}
+                    {% set has_green_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.stats.tags }}</span>
+                {% else %}
+                    {% set has_red_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.stats.tags }}</span>
+                {% endif %}
             </div>
             <div class="sf-toolbar-info-piece">
                 <b>Models</b>
-                <span class="sf-toolbar-status">{{ collector.stats.models }}</span>
+                {% if collector.stats.models %}
+                    {% set has_green_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.stats.models }}</span>
+                {% else %}
+                    {% set has_red_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.stats.models }}</span>
+                {% endif %}
             </div>
             <div class="sf-toolbar-info-piece">
                 <b>Schemes</b>
-                <span class="sf-toolbar-status">{{ collector.stats.schemes }}</span>
+                {% if collector.stats.schemes %}
+                    {% set has_green_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.stats.schemes }}</span>
+                {% else %}
+                    {% set has_red_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.stats.schemes }}</span>
+                {% endif %}
             </div>
             <div class="sf-toolbar-info-piece">
-                <b>Authorizations</b>
-                <span class="sf-toolbar-status">{{ collector.stats.authorizations }}</span>
+                <b>authorizations</b>
+                {% if collector.stats.authorizations %}
+                    {% set has_green_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.stats.authorizations }}</span>
+                {% else %}
+                    {% set has_red_status = true %}
+                    <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.stats.authorizations }}</span>
+                {% endif %}
             </div>
         </div>
     {% endset %}
+
+    {% if collector.cacheEnabled %}
+        {% if has_red_status %}
+            {% set block_status = 'yellow' %}
+        {% else %}
+            {% set block_status = 'green' %}
+        {% endif %}
+    {% else %}
+        {% if has_green_status %}
+            {% set block_status = 'yellow' %}
+        {% else %}
+            {% set block_status = 'red' %}
+        {% endif %}
+    {% endif %}
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true, name: 'swagger', status: block_status, additional_classes: 'sf-toolbar-block-right' }) }}
 

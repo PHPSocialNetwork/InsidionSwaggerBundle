@@ -4,7 +4,7 @@ parameters:
 services:
     swagger.request_collector:
         class: "%swagger.data_collector.class%"
-        arguments: []
+        arguments: ['@swagger.definition.builder', '@router']
         public: false
         tags:
             -

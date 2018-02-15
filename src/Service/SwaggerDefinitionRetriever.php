@@ -31,7 +31,7 @@ class SwaggerDefinitionRetriever
         if($this->fileSystem->exists($filePath)) {
             return file_get_contents($filePath);
         } else {
-            return $this->container->get('swagger.definition.builder')->buildSwagger();
+            return $this->container->get('swagger.definition.builder')->getJsonSwaggerBuild();
         }
     }
 }
