@@ -55,7 +55,9 @@ class RoutingProcessor
         /* @var Route $route */
         foreach ($this->routeCollection->getIterator() as $route) {
             $routeMethod = $this->getReflectionMethodForRoute($route);
-            if($routeMethod === null) continue;
+            if($routeMethod === null){
+                continue;
+            }
 
             /** @var Swagger $swaggerAnnotation */
             $swaggerAnnotation = $reader->getMethodAnnotation($routeMethod, Swagger::class);

@@ -2,10 +2,10 @@
 
 namespace Insidion\SwaggerBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -23,28 +23,36 @@ class InsidionSwaggerExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        if ($config['cache'] === true) {
+        if ($config[ 'cache' ] === true) {
             $loader->load('cache.yml');
         }
 
-        if (isset($config['swagger'])) {
-            if ($config['swagger']['host'] === false){
-                unset($config['swagger']['host']);
+        if (isset($config[ 'swagger' ])) {
+            if ($config[ 'swagger' ][ 'host' ] === false) {
+                unset($config[ 'swagger' ][ 'host' ]);
             }
-            if ($config['swagger']['basePath'] === false){
-                unset($config['swagger']['basePath']);
+            if ($config[ 'swagger' ][ 'basePath' ] === false) {
+                unset($config[ 'swagger' ][ 'basePath' ]);
             }
 
-            $container->setParameter("morlack.swagger.info", $config['swagger']);
+            $container->setParameter("morlack.swagger.info", $config[ 'swagger' ]);
             $container->setParameter("morlack.swagger.cache", [
-              'enabled' => $config['cache'],
-              'service' => $config['cache_service']
+              'enabled' => $config[ 'cache' ],
+              'service' => $config[ 'cache_service' ],
             ]);
         } else {
-            $container->setParameter("morlack.swagger.info", array());
-            $container->setParameter("morlack.swagger.cache", array());
+            $container->setParameter("morlack.swagger.info", []);
+            $container->setParameter("morlack.swagger.cache", []);
         }
 
-        $loader->load('common.yml');
+        $loader->load('services.yml');
+
+        /**
+         * Includes services_dev.yml only
+         * if we are in debug mode
+         */
+        if(in_array($container->getParameter('kernel.environment'), ['dev', 'test'])){
+            $loader->load('services_dev.yml');
+        }
     }
 }

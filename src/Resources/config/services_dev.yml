@@ -1,0 +1,14 @@
+parameters:
+    swagger.data_collector.class: Insidion\SwaggerBundle\DataCollector\SwaggerCollector
+
+services:
+    swagger.request_collector:
+        class: "%swagger.data_collector.class%"
+        arguments: []
+        public: false
+        tags:
+            -
+                name:     data_collector
+                template: '@InsidionSwagger/DataCollector/template.html.twig'
+                id:       'swagger'
+                priority: -500

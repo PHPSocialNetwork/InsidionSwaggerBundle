@@ -1,0 +1,77 @@
+{#
+ * This file is part of phpFastCache.
+ *
+ * @license MIT License (MIT)
+ *
+ * For full copyright and license information, please see the docs/CREDITS.txt file.
+ *
+ * @author Georges.L (Geolim4)  <contact@geolim4.com>
+ * @author PastisD https://github.com/PastisD
+ * @author Khoa Bui (khoaofgod)  <khoaofgod@gmail.com> http://www.phpfastcache.com
+#}
+
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+
+    {% if collector.stats.routes < 1 %}
+        {% set block_status = 'red' %}
+    {% else %}
+        {% set block_status = 'green' %}
+    {% endif %}
+    {% set icon %}
+        <span class="icon">{{ include('@InsidionSwagger/DataCollector/icon.svg') }}</span>
+        <span class="sf-toolbar-value">{{ collector.stats.routes }}</span>
+    {% endset %}
+
+    {% set text %}
+        <div class="sf-toolbar-info-group">
+            <div class="sf-toolbar-info-piece">
+                <b>See more</b>
+                <span>
+                    <a href="javascript:;">Swagger UI</a>
+                </span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Cache</b>
+                {% if collector.cacheEnabled %}
+                    <span class="sf-toolbar-status sf-toolbar-status-green">enabled</span>
+                {% else %}
+                    <span class="sf-toolbar-status sf-toolbar-status-red">disabled</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="sf-toolbar-info-group">
+            <div class="sf-toolbar-info-piece">
+                <b>Routes</b>
+                <span class="sf-toolbar-status">{{ collector.stats.routes }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Tags</b>
+                <span class="sf-toolbar-status">{{ collector.stats.tags }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Models</b>
+                <span class="sf-toolbar-status">{{ collector.stats.models }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Schemes</b>
+                <span class="sf-toolbar-status">{{ collector.stats.schemes }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Authorizations</b>
+                <span class="sf-toolbar-status">{{ collector.stats.authorizations }}</span>
+            </div>
+        </div>
+    {% endset %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true, name: 'swagger', status: block_status, additional_classes: 'sf-toolbar-block-right' }) }}
+
+{% endblock %}
+
+{% block menu %}
+
+{% endblock %}
+
+{% block panel %}
+{% endblock %}
