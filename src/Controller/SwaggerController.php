@@ -3,6 +3,7 @@
 namespace Insidion\SwaggerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SwaggerController extends Controller
@@ -19,15 +20,9 @@ class SwaggerController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function jsonAction() {
-        /**
-         * Not a JSON response since this came from a string...
-         */
-        return new Response(
-          $this->get("swagger.definition.retriever")->retrieve(),
-          Response::HTTP_OK,
-          [
-            'Content-Type' => 'Application/json'
-          ]
+        return new JsonResponse(
+          $this->get("swagger.definition.builder")->getSwaggerBuild(),
+          Response::HTTP_OK
         );
     }
 }

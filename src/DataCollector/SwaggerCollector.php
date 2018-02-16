@@ -2,15 +2,13 @@
 
 /**
  *
- * This file is part of phpFastCache.
+ * This file is part of InsidionSwaggerBundle.
  *
  * @license MIT License (MIT)
  *
  * For full copyright and license information, please see the docs/CREDITS.txt file.
  *
  * @author Georges.L (Geolim4)  <contact@geolim4.com>
- * @author PastisD https://github.com/PastisD
- * @author Khoa Bui (khoaofgod)  <khoaofgod@gmail.com> http://www.phpfastcache.com
  *
  */
 
@@ -26,24 +24,31 @@ use Symfony\Component\Routing\RouterInterface;
 class SwaggerCollector extends DataCollector
 {
     /**
-     * @var SwaggerBuilder $swaggerBuilder
+     * @var SwaggerBuilder
      */
     private $swaggerBuilder;
 
     /**
-     * @var RouterInterface $swaggerBuilder
+     * @var RouterInterface
      */
     private $router;
+
+    /**
+     * @var array
+     */
+    private $swaggerCacheOptions;
 
     /**
      * SwaggerCollector constructor.
      * @param SwaggerBuilder $builder
      * @param RouterInterface $Router
+     * @param array $swaggerCacheOptions
      */
-    public function __construct(SwaggerBuilder $builder, RouterInterface $Router)
+    public function __construct(SwaggerBuilder $builder, RouterInterface $Router, array $swaggerCacheOptions)
     {
         $this->swaggerBuilder = $builder;
         $this->router = $Router;
+        $this->swaggerCacheOptions = $swaggerCacheOptions;
     }
 
     /**
@@ -70,7 +75,8 @@ class SwaggerCollector extends DataCollector
             }
         }
         $this->data = [
-          'cache_enabled' => (bool)mt_rand(0, 1),
+          'cache_enabled' => $this->swaggerCacheOptions['enabled'],
+          'cache_service' => $this->swaggerCacheOptions['service'],
           'swagger_url' => $swagger_url,
           'stats' => [
             'routes' => $paths,
@@ -97,6 +103,15 @@ class SwaggerCollector extends DataCollector
     {
         return $this->data[ 'cache_enabled' ];
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCacheService()
+    {
+        return $this->data[ 'cache_service' ];
+    }
+
 
     /**
      * @return mixed

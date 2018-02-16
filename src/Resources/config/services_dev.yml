@@ -4,7 +4,7 @@ parameters:
 services:
     swagger.request_collector:
         class: "%swagger.data_collector.class%"
-        arguments: ['@swagger.definition.builder', '@router']
+        arguments: ['@swagger.definition.builder', '@router', '%morlack.swagger.cache%']
         public: false
         tags:
             -

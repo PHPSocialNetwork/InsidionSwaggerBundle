@@ -1,19 +1,18 @@
 services:
-  swagger.external.filesystem:
-    class: Symfony\Component\Filesystem\Filesystem
-
   swagger.processor.routing:
     class:  Insidion\SwaggerBundle\Processor\RoutingProcessor
-    arguments: ['@router', '%morlack.swagger.info%']
+    arguments:
+      - '@router'
+      - '%morlack.swagger.info%'
 
   swagger.processor.schema:
-      class:  Insidion\SwaggerBundle\Processor\SchemaProcessor
-      arguments: ['%kernel.root_dir%']
+    class:  Insidion\SwaggerBundle\Processor\SchemaProcessor
+    arguments:
+      - '%kernel.root_dir%'
 
   swagger.definition.builder:
     class: Insidion\SwaggerBundle\Service\SwaggerBuilder
-    arguments: ['%morlack.swagger.info%', '@swagger.processor.routing', '@swagger.processor.schema']
-
-  swagger.definition.retriever:
-    class: Insidion\SwaggerBundle\Service\SwaggerDefinitionRetriever
-    arguments: ['@service_container', '%kernel.cache_dir%', '@swagger.external.filesystem']
+    arguments:
+      - '@service_container'
+    tags:
+      - {name: 'kernel.cache_warmer'}

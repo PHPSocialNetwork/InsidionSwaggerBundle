@@ -26,8 +26,13 @@ class RoutingProcessor
      * @var array
      */
     protected static $ALLOWED_HTTP_METHODS = [
-      'GET', 'POST', 'DELETE', 'PUT',
-      'PATCH', 'HEAD', 'OPTIONS'
+      'GET',
+      'POST',
+      'DELETE',
+      'PUT',
+      'PATCH',
+      'HEAD',
+      'OPTIONS',
     ];
 
     /* @var RouteCollection $routeCollection */
@@ -51,11 +56,11 @@ class RoutingProcessor
     {
         $reader = new AnnotationReader();
 
-        $paths = array();
+        $paths = [];
         /* @var Route $route */
         foreach ($this->routeCollection->getIterator() as $route) {
             $routeMethod = $this->getReflectionMethodForRoute($route);
-            if($routeMethod === null){
+            if ($routeMethod === null) {
                 continue;
             }
 
@@ -70,51 +75,51 @@ class RoutingProcessor
              * supplied an unsupported method
              */
             $invalidHttpMethod = array_diff($route->getMethods(), self::$ALLOWED_HTTP_METHODS);
-            if($invalidHttpMethod){
-                if(count($invalidHttpMethod) === 1){
+            if ($invalidHttpMethod) {
+                if (count($invalidHttpMethod) === 1) {
                     throw new \InvalidArgumentException(
                       'Path ' . $route->getPath() . ' : Swagger does not supports this HTTP method: ' . implode(', ', $invalidHttpMethod)
                     );
-                }else{
+                } else {
                     throw new \InvalidArgumentException(
                       'Path ' . $route->getPath() . ' : Swagger does not supports these HTTP methods: ' . implode(', ', $invalidHttpMethod)
                     );
                 }
             }
 
-            $path = explode('.', $route->getPath())[0];
-            if (!isset($paths[$path])){
-                $paths[$path] = array();
+            $path = explode('.', $route->getPath())[ 0 ];
+            if (!isset($paths[ $path ])) {
+                $paths[ $path ] = [];
             }
 
             // Prepare the data for the route.
             $allAnnotations = $reader->getMethodAnnotations($routeMethod);
-            $routeData = array(
-                "operationId" => $this->getOperationId($swaggerAnnotation, $this->extractControllerDefaultFromRoute($route)),
-                "summary" => $swaggerAnnotation->summary,
-                "description" => $swaggerAnnotation->description,
-                "deprecated" => $swaggerAnnotation->deprecated,
-                "security" => $swaggerAnnotation->security,
-                "produces" => $swaggerAnnotation->produces,
-                "consumes" => $swaggerAnnotation->consumes,
-                "responses" => $this->createResponsesForRoute($allAnnotations),
-                "parameters" => $this->createParametersForRoute($route, $allAnnotations),
-            );
+            $routeData = [
+              "operationId" => $this->getOperationId($swaggerAnnotation, $this->extractControllerDefaultFromRoute($route)),
+              "summary" => $swaggerAnnotation->summary,
+              "description" => $swaggerAnnotation->description,
+              "deprecated" => $swaggerAnnotation->deprecated,
+              "security" => $swaggerAnnotation->security,
+              "produces" => $swaggerAnnotation->produces,
+              "consumes" => $swaggerAnnotation->consumes,
+              "responses" => $this->createResponsesForRoute($allAnnotations),
+              "parameters" => $this->createParametersForRoute($route, $allAnnotations),
+            ];
 
             if ($swaggerAnnotation->tags !== null) {
-                $routeData["tags"] = $swaggerAnnotation->tags;
+                $routeData[ "tags" ] = $swaggerAnnotation->tags;
             }
 
             // Set the data for each method. Needed for when a route can handle multiple methods.
             foreach ($route->getMethods() as $method) {
                 $methodKey = strtolower($method);
-                $paths[$path][$methodKey] = $routeData;
-                $paths[$path][$methodKey]['operationId'] = str_ireplace('{method}', $methodKey, $paths[$path][$methodKey]['operationId']);
+                $paths[ $path ][ $methodKey ] = $routeData;
+                $paths[ $path ][ $methodKey ][ 'operationId' ] = str_ireplace('{method}', $methodKey, $paths[ $path ][ $methodKey ][ 'operationId' ]);
 
-                if(in_array($method, ['GET', 'HEAD']) && !empty($routeData["parameters"])){
-                    foreach ($routeData["parameters"] as $parameter) {
-                        if($parameter['in'] === 'body'){
-                            throw new \RuntimeException(sprintf('Operation "%s": Request with GET/HEAD method cannot have body.', $routeData['operationId']));
+                if (in_array($method, ['GET', 'HEAD']) && !empty($routeData[ "parameters" ])) {
+                    foreach ($routeData[ "parameters" ] as $parameter) {
+                        if ($parameter[ 'in' ] === 'body') {
+                            throw new \RuntimeException(sprintf('Operation "%s": Request with GET/HEAD method cannot have body.', $routeData[ 'operationId' ]));
                         }
                     }
                 }
@@ -132,24 +137,24 @@ class RoutingProcessor
      */
     private function createResponsesForRoute($annotations)
     {
-        $responses = array();
+        $responses = [];
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof SwaggerResult) {
                 /* @var SwaggerResult $annotation */
-                $response = array(
-                    "description" => $annotation->description
-                );
-                if($annotation->schema !== null) {
+                $response = [
+                  "description" => $annotation->description,
+                ];
+                if ($annotation->schema !== null) {
                     $schema = $this->processSchemaType($annotation);
-                    $nativeSchemas = array('string', 'number', 'integer', 'boolean', 'file');
-                    if( array_search($annotation->schema, $nativeSchemas) != false) {
-                        $response['schema']['type'] = $annotation->schema;
+                    $nativeSchemas = ['string', 'number', 'integer', 'boolean', 'file'];
+                    if (array_search($annotation->schema, $nativeSchemas) != false) {
+                        $response[ 'schema' ][ 'type' ] = $annotation->schema;
                     } else {
-                        $response['schema'] = $schema;
+                        $response[ 'schema' ] = $schema;
                     }
                 }
-                $responses[$annotation->status] = $response;
+                $responses[ $annotation->status ] = $response;
             }
         }
         return $responses;
@@ -160,44 +165,49 @@ class RoutingProcessor
      * @param $annotations
      * @return array Parameters for this call
      */
-    private function createParametersForRoute(Route $route, $annotations) {
-        $parameters = array();
+    private function createParametersForRoute(Route $route, $annotations)
+    {
+        $parameters = [];
 
         preg_match_all('/{[_a-zA-Z]*}*/', $route->getPath(), $matches);
-        $pathRequirements = array_filter(array_map(function($v) {
+        $pathRequirements = array_filter(array_map(function ($v) {
             return trim(substr($v, 1, -1));
-        }, $matches[0]));
+        }, $matches[ 0 ]));
 
-        $allowedInUrl = array('string', 'number', 'integer', 'boolean', 'array', 'file');
+        $allowedInUrl = ['string', 'number', 'integer', 'boolean', 'array', 'file'];
         foreach ($pathRequirements as $pathRequirement) {
-            if(strpos($pathRequirement, "_") === 0) continue;
-            $parameters[] = array(
-                "in" => "path",
-                "name" => $pathRequirement,
-                "type" => "string",
-                "required" => true,
-            );
+            if (strpos($pathRequirement, "_") === 0) {
+                continue;
+            }
+            $parameters[] = [
+              "in" => "path",
+              "name" => $pathRequirement,
+              "type" => "string",
+              "required" => true,
+            ];
         }
 
-        /* @var SwaggerParameter $annotation*/
-        foreach($annotations as $annotation) {
-            if(!$annotation instanceof SwaggerParameter) continue;
+        /* @var SwaggerParameter $annotation */
+        foreach ($annotations as $annotation) {
+            if (!$annotation instanceof SwaggerParameter) {
+                continue;
+            }
             $index = $this->findParameterInArray($parameters, $annotation->name);
-            if($index === false) {
-                $parameters[] = array(
+            if ($index === false) {
+                $parameters[] = [
                   "in" => $annotation->in,
                   "name" => $annotation->name,
                   "description" => $annotation->description,
                   "required" => $annotation->required,
                   "schema" => $annotation->in == "body" ? $this->processSchemaType($annotation) : $annotation->schema,
-                );
+                ];
             } else {
-                if(array_search($annotation->schema, $allowedInUrl) === false) {
+                if (array_search($annotation->schema, $allowedInUrl) === false) {
                     throw new InvalidConfigurationException(sprintf("Schema type %s not allowed as path parameter!", $annotation->schema));
                 }
-                $parameters[$index]['description'] = $annotation->description;
-                $parameters[$index]['type'] = $annotation->schema;
-                $parameters[$index]['required'] = $annotation->required;
+                $parameters[ $index ][ 'description' ] = $annotation->description;
+                $parameters[ $index ][ 'type' ] = $annotation->schema;
+                $parameters[ $index ][ 'required' ] = $annotation->required;
             }
         }
 
@@ -208,20 +218,21 @@ class RoutingProcessor
      * @param $annotation
      * @return array
      */
-    private function processSchemaType(Annotation $annotation) {
+    private function processSchemaType(Annotation $annotation)
+    {
         $schema = $annotation->schema;
-        if(strpos($schema, '#') === 0) {
+        if (strpos($schema, '#') === 0) {
             // It is a reference to a definition
-            $schema = array(
-                "\$ref" => "#/definitions/" . substr($schema, 1)
-            );
+            $schema = [
+              "\$ref" => "#/definitions/" . substr($schema, 1),
+            ];
         }
 
-        if($annotation->isArray) {
-            $schema = array(
-                'type' => 'array',
-                'items' => $schema
-            );
+        if ($annotation->isArray) {
+            $schema = [
+              'type' => 'array',
+              'items' => $schema,
+            ];
         }
 
         return $schema;
@@ -232,11 +243,12 @@ class RoutingProcessor
      * @param $parameter
      * @return bool|string
      */
-    private function findParameterInArray($parameters, $parameter) {
-        foreach($parameters as $key => $value)
-        {
-            if ($value['name'] === $parameter)
+    private function findParameterInArray($parameters, $parameter)
+    {
+        foreach ($parameters as $key => $value) {
+            if ($value[ 'name' ] === $parameter) {
                 return $key;
+            }
         }
         return false;
     }
@@ -268,8 +280,8 @@ class RoutingProcessor
         $operationId = $swagger->operationId;
         if (!isset($operationId)) {
             throw new InvalidConfigurationException(sprintf(
-                "The operationId option of the Swagger annotation on route method %s has not been filled! Please do so.",
-                $method
+              "The operationId option of the Swagger annotation on route method %s has not been filled! Please do so.",
+              $method
             ));
         }
         return $operationId;
@@ -285,7 +297,7 @@ class RoutingProcessor
     {
         $controller = explode('::', $this->extractControllerDefaultFromRoute($route));
 
-        return isset($controller[0]) ? $controller[0] : null;
+        return isset($controller[ 0 ]) ? $controller[ 0 ] : null;
     }
 
     private function extractControllerDefaultFromRoute(Route $route)
@@ -308,6 +320,6 @@ class RoutingProcessor
     {
         $controller = explode('::', $this->extractControllerDefaultFromRoute($route));
 
-        return isset($controller[1]) ? $controller[1] : null;
+        return isset($controller[ 1 ]) ? $controller[ 1 ] : null;
     }
 }

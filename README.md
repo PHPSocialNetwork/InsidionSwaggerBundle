@@ -1,11 +1,12 @@
 # Insidion Swagger Bundle
+## !! V2 CURRENTLY IN DEVELOPMENT, STAR THE REPO TO STAY TUNED !!
 
 
 Integrate the power of [swagger.io](https://swagger.io) in your Symfony 3 application. 
 
 If you have not hear about swagger yet, I suggest you take a look at it. It defined a service contract for your REST API. It also provides you with a built-in web interface to execute request with provided example models.
 
-However, writing one yourself can becom tedious, and thus I introduce this bundle!
+However, writing one yourself can become tedious, and thus I introduce this bundle!
 
 ## Features
 
@@ -21,9 +22,9 @@ I currently have plans to implement these features in the future:
 * Security settings
 * FOSRestBundle Versioning integration
 
-Have another suggestion? Send me an e-mail at mitchellherrijgers@gmail.com
+Have another suggestion? Open an issue or send a pull request
 
 ## More documentation
 
-I won't leave you in the dark to figure out how the bundle works. You can find documentation in the [Resources/doc](https://github.com/Morlack/InsidionSwaggerBundle/tree/master/src/Resources/doc) folder.
+I won't leave you in the dark to figure out how the bundle works. You can find documentation in the [Resources/doc](https://github.com/PHPSocialNetwork/InsidionSwaggerBundle/tree/master/src/Resources/doc) folder.
 

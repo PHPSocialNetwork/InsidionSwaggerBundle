@@ -1,13 +1,11 @@
 {#
- * This file is part of phpFastCache.
+ * This file is part of InsidionSwaggerBundle.
  *
  * @license MIT License (MIT)
  *
  * For full copyright and license information, please see the docs/CREDITS.txt file.
  *
  * @author Georges.L (Geolim4)  <contact@geolim4.com>
- * @author PastisD https://github.com/PastisD
- * @author Khoa Bui (khoaofgod)  <khoaofgod@gmail.com> http://www.phpfastcache.com
 #}
 
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
@@ -16,8 +14,8 @@
     {% set has_green_status = false %}
     {% set has_red_status = false %}
     {% set icon %}
-        <span class="icon">{{ include('@InsidionSwagger/DataCollector/icon.svg') }}</span>
-        <span class="sf-toolbar-value">{{ collector.stats.routes }}</span>
+        <span class="icon" title="Swagger">{{ include('@InsidionSwagger/DataCollector/icon.svg') }}</span>
+        <span class="sf-toolbar-value" title="Swagger">{{ collector.stats.routes }}</span>
     {% endset %}
 
     {% set text %}
@@ -38,7 +36,11 @@
             <div class="sf-toolbar-info-piece">
                 <b>Cache</b>
                 {% if collector.cacheEnabled %}
-                    <span class="sf-toolbar-status sf-toolbar-status-green">enabled</span>
+                    {% if collector.cacheService %}
+                        <span class="sf-toolbar-status sf-toolbar-status-green"><abbr title="Service class: {{ collector.cacheService }}">enabled</abbr></span>
+                    {% else %}
+                        <span class="sf-toolbar-status sf-toolbar-status-green">enabled</span>
+                    {% endif %}
                 {% else %}
                     <span class="sf-toolbar-status sf-toolbar-status-red">disabled</span>
                 {% endif %}
