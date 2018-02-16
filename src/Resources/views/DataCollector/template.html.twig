@@ -88,7 +88,7 @@
                 {% endif %}
             </div>
             <div class="sf-toolbar-info-piece">
-                <b>authorizations</b>
+                <b>Authorizations</b>
                 {% if collector.stats.authorizations %}
                     {% set has_green_status = true %}
                     <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.stats.authorizations }}</span>
@@ -119,8 +119,96 @@
 {% endblock %}
 
 {% block menu %}
+    <span class="label{% if collector.stats|length == 0 %} disabled{% endif %}">
+        <span class="icon">{{ include('@InsidionSwagger/DataCollector/icon.svg') }}</span>
+        <strong>Swagger</strong>
+        {% if collector.stats.routes %}
+            <span class="count">
+                <span>{{ collector.stats.routes }}</span>
+            </span>
+        {% endif %}
 
+    </span>
 {% endblock %}
 
 {% block panel %}
+    <!--
+    - InsidionSwaggerBundle Metrics
+    -->
+    <h2>Insidion Swagger Bundle Metrics</h2>
+    <div class="metrics">
+        <div class="metric">
+            <span class="value"> {{ collector.stats.routes }}</span>
+            <span class="label">Routes</span>
+        </div>
+        <div class="metric">
+            <span class="value"> {{ collector.stats.tags }}</span>
+            <span class="label">Tags</span>
+        </div>
+        <div class="metric">
+            <span class="value"> {{ collector.stats.models }}</span>
+            <span class="label">Models</span>
+        </div>
+        <div class="metric">
+            <span class="value"> {{ collector.stats.schemes }}</span>
+            <span class="label">Schemes</span>
+        </div>
+
+        <div class="metric">
+            <span class="value"> {{ collector.stats.authorizations }}</span>
+            <span class="label">Authorizations</span>
+        </div>
+    </div>
+
+    <h2>Insidion Swagger Bundle Configuration</h2>
+    <table>
+        <thead class="small">
+        <tr>
+            <th>Configuration</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="font-normal">
+                <span>Swagger controller</span>
+            </td>
+            <td class="font-normal">
+                <span class="label status-{{  (collector.SwaggerUrl ? 'success' : 'error') }}">
+                    {{  (collector.SwaggerUrl ? 'Yes' : 'No') }}
+                </span>
+            </td>
+            {% if collector.SwaggerUrl %}
+            <td class="font-normal">
+                <a href="{{ collector.SwaggerUrl }}">View Swagger UI</a>
+            </td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td class="font-normal">
+                <span>Cache enabled</span>
+            </td>
+            <td class="font-normal">
+                <span class="label status-{{  (collector.cacheEnabled ? 'success' : 'error') }}">
+                    {{  (collector.cacheEnabled ? 'Yes' : 'No') }}
+                </span>
+            </td>
+            <td></td>
+        </tr>
+        {% if collector.cacheEnabled %}
+        <tr>
+            <td class="font-normal">
+                <span>Cache service</span>
+            </td>
+            <td class="font-normal">
+                <span class="label status-{{  (collector.cacheService ? 'success' : 'error') }}">
+                    {{  (collector.cacheService ? collector.cacheService : 'Not setup') }}
+                </span>
+            </td>
+            <td></td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
 {% endblock %}
