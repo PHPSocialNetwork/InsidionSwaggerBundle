@@ -1,5 +1,5 @@
 insidion_swagger_index:
-    path:     /swagger/
+    path:     /swagger
     defaults: { _controller: InsidionSwaggerBundle:Swagger:index }
 
 insidion_swagger_json:
