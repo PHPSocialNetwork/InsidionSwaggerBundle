@@ -33,13 +33,6 @@ trait SymfonyKernelTrait
         $this->kernel = $this->createKernel();
         $this->kernel->boot();
         $this->container = $this->kernel->getContainer();
-
-        /**
-         * SF 3.2 compatibility
-         */
-        if(version_compare(\Symfony\Component\HttpKernel\Kernel::VERSION, '3.3', '<')){
-            $this->container->setParameter('kernel.project_dir', $this->kernel->getProjectDir());
-        }
     }
 
     protected function createKernel()
