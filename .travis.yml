@@ -23,7 +23,3 @@ install:
 
 script:
   - ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=coverage.xml
-
-cache:
-  directories:
-    - $COMPOSER_CACHE_DIR
