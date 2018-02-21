@@ -14,6 +14,8 @@ env:
 
 before_install:
   - composer self-update
+  - composer remove symfony/framework-bundle
+  - composer remove symfony/filesystem
   - composer require --no-update symfony/symfony "$SYMFONY_VERSION"
 
 install:
