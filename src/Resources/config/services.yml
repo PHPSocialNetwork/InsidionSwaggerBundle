@@ -1,16 +1,19 @@
 services:
   swagger.processor.routing:
+    public: true
     class:  Insidion\SwaggerBundle\Processor\RoutingProcessor
     arguments:
       - '@router'
       - '%morlack.swagger.info%'
 
   swagger.processor.schema:
+    public: true
     class:  Insidion\SwaggerBundle\Processor\SchemaProcessor
     arguments:
       - '%kernel.root_dir%'
 
   swagger.definition.builder:
+    public: true
     class: Insidion\SwaggerBundle\Service\SwaggerBuilder
     arguments:
       - '@service_container'

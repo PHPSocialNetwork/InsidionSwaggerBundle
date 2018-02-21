@@ -1,0 +1,28 @@
+language: php
+
+sudo: false
+
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+
+env:
+  - SYMFONY_VERSION=3.2.*
+  - SYMFONY_VERSION=3.3.*
+  - SYMFONY_VERSION=3.4.x-dev
+
+before_install:
+  - composer self-update
+  - composer require --no-update symfony/symfony "$SYMFONY_VERSION"
+
+install:
+    - composer install --no-interaction --prefer-dist
+
+script:
+  - ./vendor/bin/phpcs ./ -p --encoding=utf-8 --extensions=php --ignore="vendor|tests" --standard=./vendor/escapestudios/symfony2-coding-standard/Symfony2
+  - ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=coverage.xml
+
+cache:
+  directories:
+    - $COMPOSER_CACHE_DIR

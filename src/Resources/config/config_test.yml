@@ -1,0 +1,76 @@
+# Config file for unit tests
+imports:
+    - { resource: services.yml }
+parameters:
+    locale: en
+framework:
+    secret: ''
+    default_locale: '%locale%'
+    trusted_hosts: ~
+    router:
+        resource: '@InsidionSwaggerBundle/Resources/config/routing.yml'
+        strict_requirements: ~
+    session:
+        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id: session.handler.native_file
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+    fragments: ~
+    http_method_override: true
+    php_errors:
+        log: true
+
+
+insidion_swagger:
+  # Basic bundle properties
+  cache: false
+  cache_service: false
+
+  # The swagger object - Used for building your JSON definition file.
+  swagger:
+    produces: ['application/json', 'application/xml']
+    consumes: ['application/json', 'application/xml']
+    schemes: ['http', 'https']
+    securityDefinitions:
+      ApiTknAuth:
+        type: apiKey
+        in: header
+        name: X-Api-Tkn
+      ApiTknAuth2:
+        type: apiKey
+        in: header
+        name: X-Api-Tkn2
+    tags:
+      -
+        name: xyz
+      -
+        name: order
+        description: A desc
+        externalDocs:
+          description:	"Find out more"
+          url: "http://swagger.io"
+      -
+        name: abc
+      -
+        name: order2
+        description: A desc
+      -
+        name: order3
+      -
+        name: def
+    host: "swagger-bundle.local"
+    basePath: "/"
+    info:
+      title: 'My Awesome REST API'
+      version: '0.0.1'
+      termsOfService: "We don't have any... yet!"
+      description: 'This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.'
+      contact:
+        name: 'Geolim4'
+        url: 'https://github.com/PHPSocialNetwork/InsidionSwaggerBundle'
+        email: 'mitchellherrijgers@gmail.com'
+      license:
+        name: 'MIT'
+        url: 'https://github.com/PHPSocialNetwork/InsidionSwaggerBundle/blob/master/LICENSE'
+    externalDocs:
+      description:	"Find out more on our documentation"
+      url:	"http://swagger.io"
