@@ -10,7 +10,7 @@
 
 namespace Insidion\SwaggerBundle\Tests;
 
-use Insidion\SwaggerBundle\Tests\KernelBootstrap as AppKernel;
+use Insidion\SwaggerBundle\Tests\KernelBootstrap;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -47,7 +47,7 @@ trait SymfonyKernelTrait
 
     protected function getKernelClass()
     {
-        return AppKernel::class;
+        return KernelBootstrap::class;
     }
 
     protected function getKernelOptions()
